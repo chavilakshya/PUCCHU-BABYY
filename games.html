@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Games for Pucchu Baby 🎮</title>
+  <style>
+    body { background:#ffe0f0; font-family: cursive; text-align:center; padding:30px; }
+    h1 { color:#ff4d6d; }
+    canvas { border:2px solid #ff4d6d; background:#fff3f8; margin:10px auto; display:block; }
+    #hiddenWord { font-size:1.5em; letter-spacing:8px; }
+    a { display:block; margin-top:20px; }
+  </style>
+</head>
+<body>
+  <h1>💕 Catch the Hearts 💕</h1>
+  <canvas id="gameCanvas" width="300" height="400"></canvas>
+  <p>Use ← → arrows to catch hearts!</p>
+
+  <h1>💌 Guess the Hidden Message 💌</h1>
+  <p id="hiddenWord"></p>
+  <input type="text" id="guessInput" maxlength="1" placeholder="Enter a letter">
+  <button onclick="guessLetter()">Guess</button>
+  <p id="result"></p>
+
+  <a href="index.html">⬅ Back Home</a>
+
+  <script>
+    // Catch the Hearts
+    const canvas=document.getElementById("gameCanvas"),ctx=canvas.getContext("2d");
+    let basketX=120,hearts=[],score=0;
+    document.addEventListener("keydown",e=>{if(e.key==="ArrowLeft")basketX-=20;if(e.key==="ArrowRight")basketX+=20;});
+    function drawBasket(){ctx.fillStyle="#ff4d6d";ctx.fillRect(basketX,370,60,20);}
+    function drawHearts(){ctx.fillStyle="red";hearts.forEach(h=>ctx.fillText("❤️",h.x,h.y));}
+    function updateHearts(){hearts.forEach(h=>h.y+=2);hearts=hearts.filter(h=>h.y<400);
+      hearts.forEach(h=>{if(h.y>350&&h.x>basketX&&h.x<basketX+60){score++;h.y=999;}});}
+    function loop(){ctx.clearRect(0,0,300,400);drawBasket();drawHearts();updateHearts();
+      ctx.fillStyle="#000";ctx.fillText("Score:"+score,10,20);
+      if(Math.random()<0.02)hearts.push({x:Math.random()*280,y:0});requestAnimationFrame(loop);}
+    ctx.font="20px Arial";loop();
+
+    // Guess the Message
+    const message="I LOVE YOU PUCCHU BABY";let guessed=Array(message.length).fill("_");
+    for(let i=0;i<message.length;i++)if(message[i]===" ")guessed[i]=" ";
+    document.getElementById("hiddenWord").textContent=guessed.join(" ");
+    function guessLetter(){const input=document.getElementById("guessInput");
+      const letter=input.value.toUpperCase();let found=false;
+      for(let i=0;i<message.length;i++){if(message[i]===letter){guessed[i]=letter;found=true;}}
+      document.getElementById("hiddenWord").textContent=guessed.join(" ");
+      if(!guessed.includes("_"))document.getElementById("result").textContent="🎉 You found the full message! 🎉";
+      if(!found)document.getElementById("result").textContent="Oops! Try again 💕";input.value="";}
+  </script>
+</body>
+</html>
